@@ -340,9 +340,26 @@ public class BirthdayPresentsParty {
         for (int i = 1; i <= allPresents_cnt; i++) {
             Unorganized_Unsorted_Bag.add(i);
         }
+
+        if (Unorganized_Unsorted_Bag.size() != allPresents_cnt) {
+            System.out.println("The unorganized bag doesn't have 500 thousand presents try again!");
+            System.exit(0);
+        }
         
         // shuffle to simulate disorder in the bag
         Collections.shuffle(Unorganized_Unsorted_Bag);
+
+        if (Unorganized_Unsorted_Bag.size() != allPresents_cnt) {
+            System.out.println("The unorganized bag doesn't have 500 thousand presents try again!");
+            System.exit(0);
+        }
+
+        // please use this to check to print the bag's initial content
+        /* 
+            System.out.println("The minotaur's unorganized bag has this: --------------------------");
+            System.out.println(Unorganized_Unsorted_Bag);
+            System.out.println("End of the test for disorder.-----------------------------");
+        */
 
         // we use atomics that will communciate states of addition and deletion from the chain of presents
         // we set their value as 0
@@ -355,18 +372,14 @@ public class BirthdayPresentsParty {
 
         // we create the lock free list here
         LFL _list = new LFL();
-
-        // set up the array of threads that we will start later
-        for (int i = 0; i < servant_threads_cnt; i++) {
-            servants_Threads[i] = new Minotaur_Servants(_list, i + 1, Unorganized_Unsorted_Bag, cardsCount, _bringFromUnsortedPresents, _processChainPresent, _MAINPILOT);
-        }
-
+        
         // log the start time
         start = System.currentTimeMillis();
-
+        
         // start the simulation
         for (int i = 0; i < servant_threads_cnt; i++) {
             try {
+                servants_Threads[i] = new Minotaur_Servants(_list, i + 1, Unorganized_Unsorted_Bag, cardsCount, _bringFromUnsortedPresents, _processChainPresent, _MAINPILOT);
                 servants_Threads[i].start();
             } catch (Exception e) {
                 e.printStackTrace();
