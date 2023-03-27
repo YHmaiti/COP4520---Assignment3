@@ -123,7 +123,65 @@ public class AtmosphericTemperatureReadingModule {
 }
 
 // create a class for the sensors (threads, total 8)
-class ATRM_Sensors {
+class ATRM_Sensors extends Thread{
+
+    // declare variables relevant to the functioning of the thread
+    ArrayList<ArrayList<Integer>> _sharedMemory;
+    AtomicInteger _Finish;
+    AtomicInteger _timeTracker;
+    int _sensorID;
+    int _TemperatureLowerBound;
+    int _TemperatureUpperBound;
+    int _reportAfterEach60Min;
+    int _frequencyOfTemperatureReading1Min;
+    int _SimulationHours;
+    int currentTimeVal = 0;
+
+
+    ATRM_Sensors(ArrayList<ArrayList<Integer>> _sharedMemory, AtomicInteger _Finish, AtomicInteger _timeTracker, int _sensorID, int _TemperatureLowerBound, int _TemperatureUpperBound, int _reportAfterEach60Min, int _frequencyOfTemperatureReading1Min, int _SimulationHours) {
+        this._sharedMemory = _sharedMemory;
+        this._Finish = _Finish;
+        this._timeTracker = _timeTracker;
+        this._sensorID = _sensorID;
+        this._TemperatureLowerBound = _TemperatureLowerBound;
+        this._TemperatureUpperBound = _TemperatureUpperBound;
+        this._reportAfterEach60Min = _reportAfterEach60Min;
+        this._frequencyOfTemperatureReading1Min = _frequencyOfTemperatureReading1Min;
+        this._SimulationHours = _SimulationHours;
+    }
+
+    @Override
+    public void run() {
+        while (_recordPass())
+            recordTemperature();
+    }
+
+    public void recordTemperature() {
+        currentTimeVal = _timeTracker.get();
+        // we record a temperature through the sensor that is from the lower to the upper bound -100 to 70
+        int _temperature = (int) (Math.random() * (_TemperatureUpperBound - _TemperatureLowerBound + 1) + _TemperatureLowerBound);
+        // we store the temperature in the shared memory for the correct thread
+        _sharedMemory.get(_sensorID - 1).add(_temperature);
+        // we rint the sensor id and the temperature they recorded 
+        System.out.println("Sensor " + _sensorID + " was activated.\nTemperature recorded -> " + _temperature + ", Time Stamp: " + currentTimeVal + ".");
+        // we wait as long as the minute did not pass yet, before executing a future read of the temperature
+        _waitFor60();
+    }
+
+    public boolean _recordPass() {
+        if (_Finish.get() == 1) {
+            return false;
+        } 
+        return true;
+    }
+
+    public void _waitFor60() {
+        for(;;) {
+            if (_timeTracker.get() != currentTimeVal || _Finish.get() == 1) {
+                break;
+            }
+        }
+    }
 
 }
 
