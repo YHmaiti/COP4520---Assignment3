@@ -7,6 +7,7 @@
  */
 
 // pre-processor directives
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,6 +53,8 @@ public class AtmosphericTemperatureReadingModule {
         }
         scanner.close();
 
+        /* ----An interesting idea I had, but since hashmap might not preserve order, I decided to not follow this and use an arraylist of arraylist---- */
+
         // for this problem to hold the shared memory I decided to use a concurrent hashmap
         // since all threads will need to read and write without any blocking or waiting
         // and the concurrent hashmap can guarantee time optimization and a wait-free behaviour through fine-grained locking,
@@ -62,7 +65,13 @@ public class AtmosphericTemperatureReadingModule {
         // source: https://www.developer.com/java/concurrenthashmap-java/#:~:text=Lock%2Dfree%3A%20The%20ConcurrentHashMap%20is,in%20a%20multi%2Dthreaded%20environment.
         // source2: https://www.geeksforgeeks.org/concurrenthashmap-in-java/
         // Note: some additional workaround and understanding was also inspired from the class book
-        ConcurrentHashMap<Integer, Integer> _sharedMemoryBetweenSensors = new ConcurrentHashMap<Integer, Integer>();
+        // ConcurrentHashMap<Integer, Integer> _sharedMemoryBetweenSensors = new ConcurrentHashMap<Integer, Integer>();
+        
+        /* --------------------------------------------------------------------------------------------------------------------------------------------- */
+
+        // we will use this to represent the shared memory since each thread will have an array list of temp recordings for it only which will be a non blocking 
+        // approach to handle read and write without wait time or blocking for the sensors (threads available)
+        ArrayList<ArrayList<Integer>> _sharedMemoryBetweenSensors = new ArrayList<ArrayList<Integer>>();
 
         // let's declare some atomics for the threads to communicate and use 
         AtomicInteger _Finish = new AtomicInteger(0);
@@ -125,7 +134,7 @@ class ATRM_Report {
     }
 
     // handlle the output of the report 
-    public void OutputReport(int Hour_ID, ConcurrentHashMap<Integer, Integer> _sharedConcurrentHashMap, int _reportAfterEach60Min, int _frequencyOfTemperatureReading1Min, int _SimulationHours, AtomicInteger _Finish, AtomicInteger _timeTracker, Thread[] ATRMThreads) {
+    public void OutputReport(int Hour_ID, ArrayList<ArrayList<Integer>> _sharedMemory, int _reportAfterEach60Min, int _frequencyOfTemperatureReading1Min, int _SimulationHours, AtomicInteger _Finish, AtomicInteger _timeTracker, Thread[] ATRMThreads) {
         System.out.println("Report Generation Activated: ----------------------------------------");
         System.out.println("Current Time stamp: " + Hour_ID + "hrs.");
 
@@ -152,7 +161,8 @@ class ATRM_timeElapse {
      * Once the hour has elapsed we will generate a report
      */
 
-    public static void HoursAndMinutesSimulated_ATRM(ConcurrentHashMap<Integer, Integer> _sharedConcurrentHashMap, int _reportAfterEach60Min, int _frequencyOfTemperatureReading1Min, int _SimulationHours, AtomicInteger _Finish, AtomicInteger _timeTracker, Thread[] ATRMThreads) {
+    public static void HoursAndMinutesSimulated_ATRM(
+            ArrayList<ArrayList<Integer>> _sharedConcurrentMemory, int _reportAfterEach60Min, int _frequencyOfTemperatureReading1Min, int _SimulationHours, AtomicInteger _Finish, AtomicInteger _timeTracker, Thread[] ATRMThreads) {
 
         int i = 0;
 
@@ -192,7 +202,7 @@ class ATRM_timeElapse {
             _timeTracker.set(0);
 
             // before moving to the next hour let's report the current hour findings
-            _reportHandler.OutputReport(i + 1, _sharedConcurrentHashMap, _reportAfterEach60Min, _frequencyOfTemperatureReading1Min, _SimulationHours, _Finish, _timeTracker, ATRMThreads);
+            _reportHandler.OutputReport(i + 1, _sharedConcurrentMemory, _reportAfterEach60Min, _frequencyOfTemperatureReading1Min, _SimulationHours, _Finish, _timeTracker, ATRMThreads);
         }
 
         // after all hours of the simulation are elapsed, we update the finish flag to stop the sensors work
