@@ -188,7 +188,19 @@ class ATRM_Sensors extends Thread{
 // make a class that will take care of the reporting processes and phases
 class ATRM_Report {
 
+    /*
+     *  Strategy:
+     *  we will proceed with the array lists by time stamps such that when we set our comparisons 
+     *  we will pick from all threads at the value at the same index and we will compare them.
+     */
+
+    // let's declare a 2D array where the first column will have the smallest found temperature across sensors 
+    // the second column will have the largest found temperature across sensors
+    // each row represents a time stamp
+    int [][] _temperaturesMinMax;
+
     ATRM_Report() {
+        _temperaturesMinMax = new int[60][2];
     }
 
     // handlle the output of the report 
@@ -196,7 +208,63 @@ class ATRM_Report {
         System.out.println("Report Generation Activated: ----------------------------------------");
         System.out.println("Current Time stamp: " + Hour_ID + "hrs.");
 
+        for (int minute = 0; minute < 60; minute++) {
+            int min = 71;
+            int max = -101;
+            for (int sensor = 0; sensor < 8; sensor++) {
+                if (_sharedMemory.get(sensor).get(minute) < min) {
+                    min = _sharedMemory.get(sensor).get(minute);
+                }
+                if (_sharedMemory.get(sensor).get(minute) > max) {
+                    max = _sharedMemory.get(sensor).get(minute);
+                }
+            }
+            _temperaturesMinMax[minute][0] = min;
+            _temperaturesMinMax[minute][1] = max;
+        }
 
+        // we will work with 10 minute intervals
+        int interval_difference = 10;
+        int iterator = 0;
+        int highestTempInterval = 0;
+        int intervalHighestTemp = 0;
+        int _Inde_Interval = 0;
+        // we get the top 5 highest temps and top 5 lowest temperatures for the current
+        // hour
+        int[] _highets5Temps = new int[5];
+        int[] _lowest5Temps = new int[5];
+        while (iterator + interval_difference <= 60) {
+            int min = 71;
+            int max = -101;
+            for (int i = iterator; i < iterator + interval_difference; i++) {
+                if (_temperaturesMinMax[i][0] < min) {
+                    min = _temperaturesMinMax[i][0];
+                }
+                if (_temperaturesMinMax[i][1] > max) {
+                    max = _temperaturesMinMax[i][1];
+                }
+            }
+            intervalHighestTemp = max - min;
+            if (intervalHighestTemp > highestTempInterval) {
+                highestTempInterval = intervalHighestTemp;
+                _Inde_Interval = iterator;
+            }
+            iterator += interval_difference;
+        }
+        
+        // we iterate over the arraylist and we build an arrayList of temperatures then we pick highest 5 and lowest 
+        // 5 temperatures 
+        ArrayList<Integer> _allTemps = new ArrayList<Integer>();
+        _allTemps = _sharedMemory.stream().flatMap(List::stream).collect(Collectors.toCollection(ArrayList::new));
+        Collections.sort(_allTemps);
+        for (int i = 0; i < 5; i++) {
+            _highets5Temps[i] = _allTemps.get(_allTemps.size() - 1 - i);
+            _lowest5Temps[i] = _allTemps.get(i);
+        }
+
+        System.out.println("The top 5 highest temperatures are -> " + Arrays.toString(_highets5Temps));
+        System.out.println("The top 5 lowest temperatures are -> " + Arrays.toString(_lowest5Temps));
+        System.out.println("The 10-min interval of time when the largest temperature difference was observed was -> [" + _Inde_Interval + "Min, " + (_Inde_Interval + interval_difference) + "Min].\nThe temperature difference reached -> " + highestTempInterval + " degrees.");
         System.out.println("Report Generation Finished: ----------------------------------------");
     }
 
