@@ -318,17 +318,17 @@ class LFL {
 // class that contains the driver process
 public class BirthdayPresentsParty {
 
+    // based on the problem we have 4 servants for the Minotaur, we store that
+    public static int servant_threads_cnt = 4;
+
+    // total presents is 500 thousand
+    public static int allPresents_cnt = 500000;
+
+    // declare the ecxecution time vars
+    public static long start, end;
+
     // main driver method
     public static void main(String[] args) throws InterruptedException{
-
-        // declare the ecxecution time vars
-        long start, end;
-
-        // based on the problem we have 4 servants for the Minotaur, we store that
-        int servant_threads_cnt = 4;
-
-        // total presents is 500 thousand
-        int allPresents_cnt = 500000;
 
         // we create the unorganized unsorted bag of presents that will be processed by servants
         // total amnt of presents is 500 thousand, also we declare an array of threads that represents the servants
