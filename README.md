@@ -23,6 +23,8 @@ java BirthdayPresentsParty
 
 **Proof Of Correctness and Efficiency:**
 
+For the design of my solution, I have relied on using a lock free list based on the chapter 9 in the book, class slides and also online resources. Additionally, in this implementation, I have relied on using atomics, including the use of Atomic Markable References (https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/atomic/AtomicMarkableReference.html)(https://www.baeldung.com/java-atomicmarkablereference). The use of this type of atomic allows not only to have access to the node itself and its content, but also to mark it in case a thread is doing something with it, so other threads would know. Additionally, I tried to come up with a strategy where the threads will not wait to remove from the chain untill all bag presents were present in the chain. Thus, besides using the atomic markable references in my node and lock free list implementation, I also relied on using three trackers. These trackers were three atomic variables, one for tracking the addition from the unorganized bag to the chain, one for tracking the removal from the chain, and one for tracking the writing of thank you cards to the guests. This strategy allows threads to communicate efficiently and handle the potential edge cases as is needed. Moreover, to handle the Moinotaur's random presents check in the chain,  
+
 **Experimental Evaluation and Efficiency:**
 
 # Problem 2:
