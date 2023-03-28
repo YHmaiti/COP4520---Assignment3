@@ -40,10 +40,78 @@ him and his servants save time and effort.
 Note: -> as we are using randomization in the process and for presents, the time of execution can relatively change 
 by a bit but the scope will be the same and still very fast.
 
+Note: I have kept some print statements for clarity, yet when removed the execution time definitely goes down. 
+
+
 # Problem 2:
 
-*Remarks and Notes:*
+*Remarks and Notes:* 
+-> To Compile and Run: 
+```
+javac AtmosphericTemperatureReadingModule.java 
+java AtmosphericTemperatureReadingModule 
+```  
 
-**Proof Of Correctness and Efficiency:**
+-> we have 8 sensors (threads) that need to be used. 
+-> we need to generate a report for every hour. 
+-> the report will have the top lowest 5 and top highest 5 temperatures recorded for that hour. 
+-> the report will also have the interval of 10 min where the highest temperature was recorded for that hour. 
+-> we prompt the user for the number of hours otherwise they can chose to have it for 24 hrs (default value).
+-> threads share the same memory for reading and writing temperatures
+-> temperatures are collected each minute by the sensors and written to the shared memory
+-> we use atomics to handle communication between threads and to track the time
+-> to simulate a minute ongoing we make the threads sleep for 30ms
+-> during the recording process we report the time and memory consumption
+-> Note: 
+*More details in the following sections.
+*I used several debug statements please use them as is needed for evaluation
 
-**Experimental Evaluation and Efficiency:**
+**Proof Of Correctness and Efficiency:** 
+
+
+**Experimental Evaluation and Efficiency:** 
+-> I tested it with different amounts of hours ranging from 1 to 3 to 24 and as I mentioned before I decided to record both the execution time and memory consumption to show the efficiency of my work. 
+-> I use a lot of debug statements, removing them will definitely make this faster, but I am keeping them for a clear and better evaluation. 
+
+-> for 1hr: 2914 ms and 3146392 bytes
+-> for 3hrs: 10206 ms and 3688832 bytes
+-> for 24hrs: 77422 ms and 6934296 bytes 
+
+*note:* if you add or use the debug statements in that case the time and memory might be lower/bigger slightly, and since this simulation involves some randomization, in each run the execution time and memory consumption might change, but it will still be relative and close and reflective of the speed and efficiency of the solution.  
+ 
+Here is a sample output: 
+```
+The duration of the simulation is set to default (24 hours), would you like to change the simulation hours or remain as 24hrs? (y/n)
+y
+Okay, what is the new total simulation hours you want to test with? 
+3
+Confirmed! Starting the Atmospheric Temperature Readings for 3hrs.....
+Report Generation Activated: ----------------------------------------
+Current Time stamp: 1hrs.
+The top 5 highest temperatures are -> [70, 70, 70, 69, 69]
+The top 5 lowest temperatures are -> [-99, -99, -98, -98, -98]
+The 10-min interval of time when the largest temperature difference was observed was -> [40Min, 50Min].
+The temperature difference reached -> 169 degrees.
+Report Generation Finished: ----------------------------------------
+Report Generation Activated: ----------------------------------------
+Current Time stamp: 2hrs.
+The top 5 highest temperatures are -> [70, 70, 70, 70, 70]
+The top 5 lowest temperatures are -> [-99, -99, -99, -99, -99]
+The 10-min interval of time when the largest temperature difference was observed was -> [40Min, 50Min].
+The temperature difference reached -> 169 degrees.
+Report Generation Finished: ----------------------------------------
+Report Generation Activated: ----------------------------------------
+Current Time stamp: 3hrs.
+The top 5 highest temperatures are -> [70, 70, 70, 70, 70]
+The top 5 lowest temperatures are -> [-99, -99, -99, -99, -99]
+The 10-min interval of time when the largest temperature difference was observed was -> [0Min, 10Min].
+The temperature difference reached -> 169 degrees.
+Report Generation Finished: ----------------------------------------
+The finished tracker current status is -> 1
+Total memory consumed from start to end of the simulation of 3hrs was -> 3688832 (bytes).
+The duration of the execution of the simulation of temperature recording of 3hrs was -> 10206 (ms).
+``` 
+
+-> My solution is definitely efficient as can be seen through the results even with the presence of a bunch of debug statements, additionally my solution is not only optimized for runtime but also for memory consumption. 
+
+ 

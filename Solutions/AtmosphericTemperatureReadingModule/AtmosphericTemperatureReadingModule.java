@@ -183,7 +183,7 @@ class ATRM_Sensors extends Thread{
         }
         _sharedMemory.get(_sensorID - 1).add(_temperature);
         // we rint the sensor id and the temperature they recorded 
-        System.out.println("Sensor " + _sensorID + " was activated.\nTemperature recorded -> " + _temperature + ", Time Stamp: " + currentTimeVal + ".");
+        // System.out.println("Sensor " + _sensorID + " was activated.\nTemperature recorded -> " + _temperature + ", Time Stamp: " + currentTimeVal + ".");
         // we wait as long as the minute did not pass yet, before executing a future read of the temperature
         _waitFor60();
     }
