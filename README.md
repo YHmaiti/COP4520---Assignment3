@@ -92,9 +92,9 @@ Confirmed! Starting the Atmospheric Temperature Readings for 3hrs.....
 Report Generation Activated: ----------------------------------------
 Current Time stamp: 1hrs.
 The top 5 highest temperatures are -> [70, 70, 70, 69, 69]
-The top 5 lowest temperatures are -> [-99, -99, -98, -98, -98]
-The 10-min interval of time when the largest temperature difference was observed was -> [40Min, 50Min].
-The temperature difference reached -> 169 degrees.
+The top 5 lowest temperatures are -> [-100, -99, -98, -98, -98]
+The 10-min interval of time when the largest temperature difference was observed was -> [30Min, 40Min].
+The temperature difference reached -> 170 degrees.
 Report Generation Finished: ----------------------------------------
 Report Generation Activated: ----------------------------------------
 Current Time stamp: 2hrs.
