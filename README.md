@@ -56,7 +56,7 @@ java AtmosphericTemperatureReadingModule
 -> we need to generate a report for every hour. 
 -> the report will have the top lowest 5 and top highest 5 temperatures recorded for that hour. 
 -> the report will also have the interval of 10 min where the highest temperature was recorded for that hour. 
--> we prompt the user for the number of hours otherwise they can chose to have it for 24 hrs (default value).
+-> we prompt the user for the number of hours otherwise they can chose to have it for 3 hrs (default value).
 -> threads share the same memory for reading and writing temperatures
 -> temperatures are collected each minute by the sensors and written to the shared memory
 -> we use atomics to handle communication between threads and to track the time
@@ -84,7 +84,7 @@ In my solution implementation I use an array list of array lists to be the share
  
 Here is a sample output: 
 ```
-The duration of the simulation is set to default (24 hours), would you like to change the simulation hours or remain as 24hrs? (y/n)
+The duration of the simulation is set to default (3 hours), would you like to change the simulation hours or remain as 3hrs? (y/n)
 y
 Okay, what is the new total simulation hours you want to test with? 
 3
@@ -92,21 +92,21 @@ Confirmed! Starting the Atmospheric Temperature Readings for 3hrs.....
 Report Generation Activated: ----------------------------------------
 Current Time stamp: 1hrs.
 The top 5 highest temperatures are -> [70, 70, 70, 69, 69]
-The top 5 lowest temperatures are -> [-100, -99, -98, -98, -98]
+The top 5 lowest temperatures are -> [-99, -99, -98, -98, -96]
 The 10-min interval of time when the largest temperature difference was observed was -> [30Min, 40Min].
-The temperature difference reached -> 170 degrees.
+The temperature difference reached -> 169 degrees.
 Report Generation Finished: ----------------------------------------
 Report Generation Activated: ----------------------------------------
 Current Time stamp: 2hrs.
-The top 5 highest temperatures are -> [70, 70, 70, 70, 70]
-The top 5 lowest temperatures are -> [-99, -99, -99, -99, -99]
+The top 5 highest temperatures are -> [70, 70, 70, 69, 69]
+The top 5 lowest temperatures are -> [-99, -99, -97, -95, -95]
 The 10-min interval of time when the largest temperature difference was observed was -> [40Min, 50Min].
 The temperature difference reached -> 169 degrees.
 Report Generation Finished: ----------------------------------------
 Report Generation Activated: ----------------------------------------
 Current Time stamp: 3hrs.
-The top 5 highest temperatures are -> [70, 70, 70, 70, 70]
-The top 5 lowest temperatures are -> [-99, -99, -99, -99, -99]
+The top 5 highest temperatures are -> [70, 70, 70, 70, 69]
+The top 5 lowest temperatures are -> [-99, -99, -98, -98, -98]
 The 10-min interval of time when the largest temperature difference was observed was -> [0Min, 10Min].
 The temperature difference reached -> 169 degrees.
 Report Generation Finished: ----------------------------------------
