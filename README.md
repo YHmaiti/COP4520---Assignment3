@@ -28,12 +28,13 @@ java BirthdayPresentsParty
 For the design of my solution, I have relied on using a lock free list based on the chapter 9 in the book, class slides and also online resources. Additionally, in this implementation, I have relied on using atomics, including the use of Atomic Markable References (https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/atomic/AtomicMarkableReference.html) && (https://www.baeldung.com/java-atomicmarkablereference). The use of this type of atomic allows not only to have access to the node itself and its content, but also to mark it in case a thread is doing something with it, so other threads would know. Additionally, I tried to come up with a strategy where the threads will not wait to remove from the chain untill all bag presents were present in the chain. Thus, besides using the atomic markable references in my node and lock free list implementation, I also relied on using three trackers. These trackers were three atomic variables, one for tracking the addition from the unorganized bag to the chain, one for tracking the removal from the chain, and one for tracking the writing of thank you cards to the guests. This strategy allows threads to communicate efficiently and handle the potential edge cases as is needed. Moreover, to handle the Moinotaur's random presents check in the chain,  I did set it to be based on a randomly generated value if it falls under a certain threshold, additionally, the tag chosen for the check will be based on the add tracker, this will simulate a realistic scenario, since the Minotaur will not ask at each iteration, and also using the add tracker was to pick from the recently added presents to the chain, since threads are continuously adding and removing, there is randomization for checks, and it makes more sense to check for what's recently added rather than using a random tag based on the unordered bag. Also, to add more optimization, a condition that I added for the removal was that a removal would be triggered officialy (can occur randomly too) if the remove tracker is late by 4 presents compared to adding, the reason behind this choice is that we have 4 threads, and 3 possible actions, so technically if 4 servants chose to add, and we don't want to wait till the chain is full to remove, so when there is a 4 presents in the chain, we will trigger a removal directly, yet again removals can still occur randomly too!
 
 **Experimental Evaluation and Efficiency:** 
-We tested with different inputs, debugged with several prints and by manually tracing, the results can be shown as follows, and they reflect the efficiency of my solution:
-note: I also printed which servant ID is checking for the minotaur to show parallelism:
-For 100,000 presents -> 186ms.
-For 500,000 presents -> 823ms.
-For 1,000,000 presents -> 2404ms.
-
+ 
+We tested with different inputs, debugged with several prints and by manually tracing, the results can be shown as follows, and they reflect the efficiency of my solution: 
+note: I also printed which servant ID is checking for the minotaur to show parallelism: 
+For 100,000 presents -> 186ms. 
+For 500,000 presents -> 823ms. 
+For 1,000,000 presents -> 2404ms. 
+ 
 For a Java based implementation and based on my solution, we definitely solved the issue of the Minotaur and made 
 him and his servants save time and effort. 
 Note: -> as we are using randomization in the process and for presents, the time of execution can relatively change 
