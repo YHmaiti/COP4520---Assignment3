@@ -175,7 +175,7 @@ class ATRM_Sensors extends Thread{
         currentTimeVal = _timeTracker.get();
 
         // we record a temperature through the sensor that is from the lower to the upper bound -100 to 70 inclusive
-        int _temperature = (int) (Math.random() * (_TemperatureUpperBound - _TemperatureLowerBound + 1) + _TemperatureLowerBound);
+        int _temperature = rand.nextInt(_TemperatureUpperBound - _TemperatureLowerBound + 1) + _TemperatureLowerBound;
         // we store the temperature in the shared memory for the correct thread
 /*         if (_sharedMemory.size() < _sensorID)
             _sharedMemory.add(new ArrayList<Integer>()); */
@@ -225,7 +225,7 @@ class ATRM_Report {
     }
 
     // handlle the output of the report 
-    public void OutputReport(int Hour_ID, ArrayList<ArrayList<Integer>> _sharedMemory, int _reportAfterEach60Min, int _frequencyOfTemperatureReading1Min, int _SimulationHours, AtomicInteger _Finish, AtomicInteger _timeTracker, Thread[] ATRMThreads) {
+    public void OutputReport(int Hour_ID, ArrayList<ArrayList<Integer>> _sharedMemory, int _reportAfterEach60Min, int _frequencyOfTemperatureReading1Min, int _SimulationHours, AtomicInteger _Finish, AtomicInteger _timeTracker, Thread[] ATRMThreads, int current_Hour) {
         System.out.println("Report Generation Activated: ----------------------------------------");
         System.out.println("Current Time stamp: " + Hour_ID + "hrs.");
 
@@ -233,11 +233,21 @@ class ATRM_Report {
             int min = 71;
             int max = -101;
             for (int sensor = 0; sensor < 8; sensor++) {
-                if (_sharedMemory.get(sensor).get(minute) < min) {
-                    min = _sharedMemory.get(sensor).get(minute);
+                if (current_Hour == 0) {
+                    if (_sharedMemory.get(sensor).get(minute) < min) {
+                        min = _sharedMemory.get(sensor).get(minute);
+                    }
+                    if (_sharedMemory.get(sensor).get(minute) > max) {
+                        max = _sharedMemory.get(sensor).get(minute);
+                    }
                 }
-                if (_sharedMemory.get(sensor).get(minute) > max) {
-                    max = _sharedMemory.get(sensor).get(minute);
+                else {
+                    if (_sharedMemory.get(sensor).get(minute + (current_Hour * 60)) < min) {
+                        min = _sharedMemory.get(sensor).get(minute + (current_Hour * 60));
+                    }
+                    if (_sharedMemory.get(sensor).get(minute + (current_Hour * 60)) > max) {
+                        max = _sharedMemory.get(sensor).get(minute + (current_Hour * 60));
+                    }
                 }
             }
             _temperaturesMinMax[minute][0] = min;
@@ -286,7 +296,7 @@ class ATRM_Report {
         System.out.println("The top 5 highest temperatures are -> " + Arrays.toString(_highets5Temps));
         System.out.println("The top 5 lowest temperatures are -> " + Arrays.toString(_lowest5Temps));
         System.out.println("The 10-min interval of time when the largest temperature difference was observed was -> [" + _Inde_Interval + "Min, " + (_Inde_Interval + interval_difference) + "Min].");
-        System.out.println("The temperature difference reached -> " + highestTempInterval + " degrees.");
+        System.out.println("The temperature difference reached (keep in mind this is in the interval selected and not from highest to lowest for the full hour using the top and bottom 5)-> " + highestTempInterval + " degrees.");
         System.out.println("Report Generation Finished: ----------------------------------------");
     }
 
@@ -355,7 +365,7 @@ class ATRM_timeElapse {
             }
 
             // before moving to the next hour let's report the current hour findings
-            _reportHandler.OutputReport(i + 1, _sharedConcurrentMemory, _reportAfterEach60Min, _frequencyOfTemperatureReading1Min, _SimulationHours, _Finish, _timeTracker, ATRMThreads);
+            _reportHandler.OutputReport(i + 1, _sharedConcurrentMemory, _reportAfterEach60Min, _frequencyOfTemperatureReading1Min, _SimulationHours, _Finish, _timeTracker, ATRMThreads, i);
 
             // increment the hour
             i++;

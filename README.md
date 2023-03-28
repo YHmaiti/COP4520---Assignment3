@@ -77,7 +77,7 @@ In my solution implementation I use an array list of array lists to be the share
 -> I use a lot of debug statements, removing them will definitely make this faster, but I am keeping them for a clear and better evaluation. 
 
 -> for 1hr: 2914 ms and 3146392 bytes 
--> for 3hrs: 10206 ms and 3688832 bytes 
+-> for 3hrs: 9574 ms and 3688832 bytes 
 -> for 24hrs: 77422 ms and 6934296 bytes  
 
 *note:* if you add or use the debug statements in that case the time and memory might be lower/bigger slightly, and since this simulation involves some randomization, in each run the execution time and memory consumption might change, but it will still be relative and close and reflective of the speed and efficiency of the solution.  
@@ -91,28 +91,28 @@ Okay, what is the new total simulation hours you want to test with?
 Confirmed! Starting the Atmospheric Temperature Readings for 3hrs.....
 Report Generation Activated: ----------------------------------------
 Current Time stamp: 1hrs.
-The top 5 highest temperatures are -> [70, 70, 70, 69, 69]
-The top 5 lowest temperatures are -> [-99, -99, -98, -98, -96]
-The 10-min interval of time when the largest temperature difference was observed was -> [30Min, 40Min].
-The temperature difference reached -> 169 degrees.
+The top 5 highest temperatures are -> [70, 69, 69, 69, 69]
+The top 5 lowest temperatures are -> [-100, -100, -100, -100, -100]
+The 10-min interval of time when the largest temperature difference was observed was -> [20Min, 30Min].
+The temperature difference reached (keep in mind this is in the interval selected and not from highest to lowest for the full hour using the top and bottom 5)-> 170 degrees.
 Report Generation Finished: ----------------------------------------
 Report Generation Activated: ----------------------------------------
 Current Time stamp: 2hrs.
 The top 5 highest temperatures are -> [70, 70, 70, 69, 69]
-The top 5 lowest temperatures are -> [-99, -99, -97, -95, -95]
-The 10-min interval of time when the largest temperature difference was observed was -> [40Min, 50Min].
-The temperature difference reached -> 169 degrees.
+The top 5 lowest temperatures are -> [-100, -100, -100, -100, -100]
+The 10-min interval of time when the largest temperature difference was observed was -> [0Min, 10Min].
+The temperature difference reached (keep in mind this is in the interval selected and not from highest to lowest for the full hour using the top and bottom 5)-> 169 degrees.
 Report Generation Finished: ----------------------------------------
 Report Generation Activated: ----------------------------------------
 Current Time stamp: 3hrs.
-The top 5 highest temperatures are -> [70, 70, 70, 70, 69]
-The top 5 lowest temperatures are -> [-99, -99, -98, -98, -98]
-The 10-min interval of time when the largest temperature difference was observed was -> [0Min, 10Min].
-The temperature difference reached -> 169 degrees.
+The top 5 highest temperatures are -> [70, 70, 70, 70, 70]
+The top 5 lowest temperatures are -> [-100, -100, -100, -100, -100]
+The 10-min interval of time when the largest temperature difference was observed was -> [30Min, 40Min].
+The temperature difference reached (keep in mind this is in the interval selected and not from highest to lowest for the full hour using the top and bottom 5)-> 170 degrees.
 Report Generation Finished: ----------------------------------------
 The finished tracker current status is -> 1
-Total memory consumed from start to end of the simulation of 3hrs was -> 3688832 (bytes).
-The duration of the execution of the simulation of temperature recording of 3hrs was -> 10206 (ms).
+Total memory consumed from start to end of the simulation of 3hrs was -> 3649952 (bytes).
+The duration of the execution of the simulation of temperature recording of 3hrs was -> 9574 (ms).
 ``` 
 
 -> My solution is definitely efficient as can be seen through the results even with the presence of a bunch of debug statements, additionally my solution is not only optimized for runtime but also for memory consumption. 
