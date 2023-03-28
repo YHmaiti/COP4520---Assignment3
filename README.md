@@ -66,7 +66,9 @@ java AtmosphericTemperatureReadingModule
 *More details in the following sections.
 *I used several debug statements please use them as is needed for evaluation
 
-**Proof Of Correctness and Efficiency:** 
+**Proof Of Correctness and Efficiency:**  
+
+In my solution implementation I use an array list of array lists to be the shared memory, such that each thread will have its own array list that it writes and reads to and that way no thread will need to wait on the other to read and write from the shared memory. Additionally, each thread will store in its array list the temperatures recorded each minute by the sensor for the current hour, after the hour passes a report is generated as described above, and if the hours count reached the maximum set for the simulation the full process is done. To simulate a minute we make the thread sleep for 30ms before looping to the next minute. After 60 minutes we set the minute tracker to 0 again. Temperature recorded is between -100 and 70. My process ensures that threads will not have to wait for each other to read and write from the shared memory, additionally when it comes to processing the report content, such as the top5 and bottom5 temperatures we use helper data strcuture array list after sorting the copied data to it. For the intervl of 10 min where the highest temperature was recorded for the hour, we used helper arrays to find mins and maxes and evaluated the differences to determine the highest interval amongst all the 10 min intervals in that hour. As discussed above, we used several atomics for tracking and one of them is for checking the completion of all the hours, once that is set to true all threads stop and we finish the simulation.
 
 
 **Experimental Evaluation and Efficiency:** 
