@@ -70,12 +70,13 @@ java AtmosphericTemperatureReadingModule
 
 
 **Experimental Evaluation and Efficiency:** 
+
 -> I tested it with different amounts of hours ranging from 1 to 3 to 24 and as I mentioned before I decided to record both the execution time and memory consumption to show the efficiency of my work. 
 -> I use a lot of debug statements, removing them will definitely make this faster, but I am keeping them for a clear and better evaluation. 
 
--> for 1hr: 2914 ms and 3146392 bytes
--> for 3hrs: 10206 ms and 3688832 bytes
--> for 24hrs: 77422 ms and 6934296 bytes 
+-> for 1hr: 2914 ms and 3146392 bytes 
+-> for 3hrs: 10206 ms and 3688832 bytes 
+-> for 24hrs: 77422 ms and 6934296 bytes  
 
 *note:* if you add or use the debug statements in that case the time and memory might be lower/bigger slightly, and since this simulation involves some randomization, in each run the execution time and memory consumption might change, but it will still be relative and close and reflective of the speed and efficiency of the solution.  
  
