@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Arrays.*;
 import java.util.List;
+import java.util.Random;
 
 
 // class that starts the program/simulation and creates the child threads for 
@@ -150,7 +151,7 @@ class ATRM_Sensors extends Thread{
     int _frequencyOfTemperatureReading1Min;
     int _SimulationHours;
     int currentTimeVal = 0;
-
+    Random rand = new Random();
 
     ATRM_Sensors(ArrayList<ArrayList<Integer>> _sharedMemory, AtomicInteger _Finish, AtomicInteger _timeTracker, int _sensorID, int _TemperatureLowerBound, int _TemperatureUpperBound, int _reportAfterEach60Min, int _frequencyOfTemperatureReading1Min, int _SimulationHours) {
         this._sharedMemory = _sharedMemory;
@@ -284,7 +285,8 @@ class ATRM_Report {
 
         System.out.println("The top 5 highest temperatures are -> " + Arrays.toString(_highets5Temps));
         System.out.println("The top 5 lowest temperatures are -> " + Arrays.toString(_lowest5Temps));
-        System.out.println("The 10-min interval of time when the largest temperature difference was observed was -> [" + _Inde_Interval + "Min, " + (_Inde_Interval + interval_difference) + "Min].\nThe temperature difference reached -> " + highestTempInterval + " degrees.");
+        System.out.println("The 10-min interval of time when the largest temperature difference was observed was -> [" + _Inde_Interval + "Min, " + (_Inde_Interval + interval_difference) + "Min].");
+        System.out.println("The temperature difference reached -> " + highestTempInterval + " degrees.");
         System.out.println("Report Generation Finished: ----------------------------------------");
     }
 
