@@ -11,6 +11,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Arrays.*;
+import java.util.List;
+
 
 // class that starts the program/simulation and creates the child threads for 
 // the main parent thread
@@ -43,7 +51,7 @@ public class AtmosphericTemperatureReadingModule {
         // prompt the user if they want to change the total simulation hours or keep it as default for 24hrs (1day)
         System.out.println("The duration of the simulation is set to default (24 hours), would you like to change the simulation hours or remain as 24hrs? (y/n)");
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+        char choice = scanner.next().charAt(0);
         if (choice == 'y' || choice == 'Y') {
             System.out.println("Okay, what is the new total simulation hours you want to test with? ");
             _SimulationHours = scanner.nextInt();
@@ -71,7 +79,13 @@ public class AtmosphericTemperatureReadingModule {
 
         // we will use this to represent the shared memory since each thread will have an array list of temp recordings for it only which will be a non blocking 
         // approach to handle read and write without wait time or blocking for the sensors (threads available)
-        ArrayList<ArrayList<Integer>> _sharedMemoryBetweenSensors = new ArrayList<ArrayList<Integer>>();
+        // the arraylist will be initialized with rows equal to the threads amoutn we have
+        ArrayList<ArrayList<Integer>> _sharedMemoryBetweenSensors = new ArrayList<ArrayList<Integer>>(_ThreadsAMT);
+
+        // go over the arraylist and initialize the arraylists
+        for (int i  = 0; i < _ThreadsAMT; i++) {
+            _sharedMemoryBetweenSensors.add(new ArrayList<Integer>());
+        }
 
         // let's declare some atomics for the threads to communicate and use 
         AtomicInteger _Finish = new AtomicInteger(0);
@@ -116,8 +130,8 @@ public class AtmosphericTemperatureReadingModule {
         memE = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
         // we print the memory consumption and execution time
-        System.out.println("Total memory consumed from start to end of the simulation of " + _simulationHours + "hrs was -> " + (memE - memS) + " (bytes).");
-        System.out.println("The duration of the execution of the simulation of temperature recording of " + _simulationHours + "hrs was -> " + (timeE - timeS) + " (ms).");
+        System.out.println("Total memory consumed from start to end of the simulation of " + _SimulationHours + "hrs was -> " + (memE - memS) + " (bytes).");
+        System.out.println("The duration of the execution of the simulation of temperature recording of " + _SimulationHours + "hrs was -> " + (timeE - timeS) + " (ms).");
 
     }
 }
@@ -158,9 +172,15 @@ class ATRM_Sensors extends Thread{
 
     public void recordTemperature() {
         currentTimeVal = _timeTracker.get();
-        // we record a temperature through the sensor that is from the lower to the upper bound -100 to 70
+
+        // we record a temperature through the sensor that is from the lower to the upper bound -100 to 70 inclusive
         int _temperature = (int) (Math.random() * (_TemperatureUpperBound - _TemperatureLowerBound + 1) + _TemperatureLowerBound);
         // we store the temperature in the shared memory for the correct thread
+/*         if (_sharedMemory.size() < _sensorID)
+            _sharedMemory.add(new ArrayList<Integer>()); */
+        if (currentTimeVal > 59 || (_timeTracker.get() == 0 && _Finish.get() == 1)) {
+            return;
+        }
         _sharedMemory.get(_sensorID - 1).add(_temperature);
         // we rint the sensor id and the temperature they recorded 
         System.out.println("Sensor " + _sensorID + " was activated.\nTemperature recorded -> " + _temperature + ", Time Stamp: " + currentTimeVal + ".");
@@ -177,7 +197,7 @@ class ATRM_Sensors extends Thread{
 
     public void _waitFor60() {
         for(;;) {
-            if (_timeTracker.get() != currentTimeVal || _Finish.get() == 1) {
+            if ((_timeTracker.get() != currentTimeVal && _Finish.get() == 0) || _Finish.get() == 1) {
                 break;
             }
         }
@@ -294,7 +314,7 @@ class ATRM_timeElapse {
 
         while (i < _SimulationHours) {
             // just for safety we assign a break here
-            if (i == 60) {
+            if (i == _SimulationHours) {
                 break;
             }
 
@@ -306,7 +326,7 @@ class ATRM_timeElapse {
 
                 // sleep for 10 ms
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(30);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } 
@@ -326,9 +346,18 @@ class ATRM_timeElapse {
 
             // before we move to the next hour, let's reset the time tracker
             _timeTracker.set(0);
+            
+
+            if (i + 1 == _SimulationHours) {
+                _Finish.set(1);
+            }
 
             // before moving to the next hour let's report the current hour findings
             _reportHandler.OutputReport(i + 1, _sharedConcurrentMemory, _reportAfterEach60Min, _frequencyOfTemperatureReading1Min, _SimulationHours, _Finish, _timeTracker, ATRMThreads);
+
+            // increment the hour
+            i++;
+
         }
 
         // after all hours of the simulation are elapsed, we update the finish flag to stop the sensors work
